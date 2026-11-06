@@ -232,3 +232,13 @@ For more questions/discussions feel free to stop by **#nanoGPT** on Discord:
 ## acknowledgements
 
 All nanoGPT experiments are powered by GPUs on [Lambda labs](https://lambdalabs.com), my favorite Cloud GPU provider. Thank you Lambda labs for sponsoring nanoGPT!
+
+## My Changes in This Fork
+
+Forked by Muhammad Ahmad Farooq from [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT) (MIT). nanoGPT — the simplest, fastest repository for training and finetuning medium-sized GPTs — is by Andrej Karpathy; all credit for it belongs to him.
+
+My change: text generation can now discourage repetition. `GPT.generate()` in `model.py` gains a `repetition_penalty` parameter (default 1.0, so existing behaviour is unchanged). When it is above 1.0, the logits of tokens that already appear in the sequence are divided by the penalty after temperature scaling and before top-k filtering, so the model repeats itself less. `sample.py` exposes it as a setting, so it works from the command line: `python sample.py --repetition_penalty=1.3`.
+
+Verification, stated honestly: the change was applied to a real clone of the upstream code; both files pass Python syntax compilation, and the penalty maths was checked with logic tests (at 1.0 the logits are untouched; at 1.3 a repeated token's probability drops as expected). A full sampling run needs PyTorch, which was not available in the environment where the change was prepared, so no generated sample is claimed here.
+
+What I learned: how a GPT generates text token by token — the full sampling loop in `generate()` — and how temperature, top-k and a repetition penalty each shape what comes out, and why language models fall into repetition loops.
